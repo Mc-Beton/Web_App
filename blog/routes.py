@@ -86,7 +86,7 @@ def list_drafts():
    drafts = Entry.query.filter_by(is_published=False).order_by(Entry.pub_date.desc())
    return render_template("drafts.html", drafts=drafts)
       
-@app.route("/drafts/", methods=['POST'])
+@app.route("/drafts/<int:entry_id>", methods=['POST'])
 @login_required
 def delete_entry(entry_id):
    if request.method == 'POST':
