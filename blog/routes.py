@@ -2,6 +2,7 @@ from flask import render_template, request, flash, url_for, redirect, session
 from blog import app
 from blog.models import Entry, db
 from blog.forms import EntryForm, LoginForm
+from sqlalchemy import create_engine
 import functools
 
 def login_required(view_func):
@@ -86,16 +87,12 @@ def list_drafts():
    drafts = Entry.query.filter_by(is_published=False).order_by(Entry.pub_date.desc())
    return render_template("drafts.html", drafts=drafts)
       
-@app.route("/drafts/<int:entry_id>", methods=['POST'])
+@app.route("/drafts/<int:entry_id>", methods=['POST', 'GET'])
 @login_required
 def delete_entry(entry_id):
-   if request.method == 'POST':
-      if form.validate_on_submit():
-         print(entry_id)
-         entry = Entry.query.filter_by(id=entry_id).first_or_404()
-         db.session.delete(entry)
-         db.session.commit()
-      else:
-         errors = form.errors
-      drafts2 = Entry.query.filter_by(is_published=False).order_by(Entry.pub_date.desc())
-      return render_template("drafts.html", drafts2=drafts) 
+   entry = Entry.query.filter_by(id=entry_id).first_or_404()
+   db.session.delete(entry)
+   db.session.commit()
+      
+   drafts = Entry.query.filter_by(is_published=False).order_by(Entry.pub_date.desc())
+   return render_template("drafts.html", drafts=drafts)
